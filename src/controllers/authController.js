@@ -4,34 +4,35 @@ const httpStatus = require('../helpers/httpStatus')
 
 const authController = (People) => {
 
-    const logIn = async (req, res) => {
-        const { body } = req
+    const logIn = async (req, res, next) => {
+      try{  const { body } = req
         
-          //busca el json completo con el nickname
         const user = await People.findOne({
-            userName: body.userName
+            username: body.username
         })
 
-         //comprueba de que no sea null o inexistente
+         //verificacion de archivo null
         if(user === null || !(await bcrypt.compare(body.password, user.password))
         ){
-            return res.status(httpStatus.UNAUTHORIZED).send('Invalid credentials');
+            return res.status(httpStatus.FORBIDDEN).send('Invalid credentials');
         }
 
         
 
       //al lograr logearse genera el token
-      const token = generateToken(user)
+      const token = generateToken(user.username)
 
       //devuelve un OK y el token
       return res.status(httpStatus.OK).json({
           status: 'OK',
-          token: token
-      });
+          token
+      })
+  } catch (err){
+    next(err)
   }
+    }
 
-
-    const register = async (req, res) => {
+    const register = async (req, res, next) => {
         try {
             const { body } = req
     
@@ -58,4 +59,4 @@ const authController = (People) => {
     return { logIn, register }
 }
  
-module.exports = authController
+module.exports = authController 

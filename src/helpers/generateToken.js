@@ -1,17 +1,15 @@
+//llamamos a la funcion jwt.sign para generar el token
 const jwt = require('jsonwebtoken')
 
-const generateToken = (uploadedUser) => {
-  const tokenPayLoad = {
-    firstName: uploadedUser.firstName,
-    lastName: uploadedUser.lastName,
-    
-}
+const generateToken = (data) => {
+        const token = jwt.sign(
+    {
+      username: data
+    },
+    process.env.SECRET,
+    //{ expiresIn: '1h' } (define tieempo de expiracion del token)
+  )
 
-const token = jwt.sign(
-tokenPayLoad
-, process.env.SECRET,
-{ expiresIn: '1h'}
-);
   return token
 }
 

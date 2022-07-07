@@ -1,22 +1,26 @@
-const express = require('express');
-const agencyController = require('../controllers/agencyController');
-const validator = require('express-joi-validation').createValidator({});
-const bodySchema = require('../validations/peopleBodyValidator');
-const querySchema = require('../validations/queryValidator');
-const paramsSchema = require('../validations/paramsValidator');
+const express = require('express')
+const agencyController = require('../controllers/agencyController')
+const validator = require('express-joi-validation').createValidator({})
+const bodySchema = require('../validations/agencyBodyValidator')
 
 
 const router = (Agency) => {
-  const agencyRouter = express.Router();
+  const agencyRouter = express.Router()
 
-    const { getAllAgency, getAgencyById, postAgency, deleteAgencyById, putAgencyById} = agencyController(Agency);
+  const { getAllAgency, getAgencyById, postAgency, deleteAgencyById, putAgencyById } = agencyController(Agency)
 
-    peopleRouter.route('/agency').get(validator.query(querySchema) ,getAllAgency).post(validator.body(bodySchema), postAgency);
+  agencyRouter
+  .route('/agency')
+  .get(getAllAgency)
+  .post(validator.body(bodySchema), postAgency)
 
-    peopleRouter.route('/agency/:idAgency').get(validator.params(paramsSchema) ,getAgencyById).delete(validator.params(paramsSchema) ,deleteAgencyById)
-                                        .put(validator.params(paramsSchema), validator.body(bodySchema), putAgencyById);
+  agencyRouter
+  .route('/agency/:id')
+  .get(getAgencyById)
+  .delete(deleteAgencyById)
+  .put(validator.body(bodySchema), putAgencyById)
 
-  return agencyRouter;
+  return agencyRouter
 }
 
 module.exports = router

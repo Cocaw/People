@@ -2,8 +2,8 @@ const httpStatus =require('../helpers/httpStatus')
 
 const agencyController = (Agency) => {
 
-    //trae por query del objeto
-    const getAllAgency = async (req, res) => {
+    
+    const getAllAgency = async (req, res, next) => {
        try{
             const { query} = req
 
@@ -15,7 +15,6 @@ const agencyController = (Agency) => {
 
     }
 
-    //Crea objetos
     const postAgency = async (req, res, next) => {    
         try{
             const { body } = req
@@ -35,24 +34,25 @@ const agencyController = (Agency) => {
        //params hace referencia a cuando se pone :id
        const getAgencyById = async(req, res, next) => {
         try{
-            const { params } = req;
+            const { params } = req
 
-            const agency = await Agency.findById(params.id);
+            const agency = await Agency.findById(params.id)
 
-            return res.status(httpStatus.OK).json(agency);
+            return res.status(httpStatus.OK).json(agency)
 
         }catch {
             next(err)
         }
     }
 
-    //edita
+    
     const putAgencyById = async (req, res, next) => {
         try{
-            const { params, body } = req;
+            const { params, body } = req
             await Agency.findByIdAndUpdate(
-                
-                  params.id,
+                {
+                  _id: params.id
+            },
                 {
                     name: body.name,
                     model: body.model,
@@ -62,17 +62,17 @@ const agencyController = (Agency) => {
                     mileage: body.mileage,
                     price: body.price,
                   },
-              );
-            return res.status(httpStatus.OK).send('Objeto actualizado correctamente');
+              )
+            return res.status(httpStatus.OK).send('Objeto actualizado correctamente')
         }catch{
             next(err)
         }
       }
 
-      //elimina
+      
     const deleteAgencyById = async  (req, res, next) => {
         try{
-            const { params } = req;
+            const { params } = req
 
             await Agency.findByIdAndDelete(params.id)
         
@@ -88,4 +88,4 @@ const agencyController = (Agency) => {
     return { getAllAgency, getAgencyById, postAgency, deleteAgencyById, putAgencyById}
 }
 
-module.exports = agencyController;
+module.exports = agencyController

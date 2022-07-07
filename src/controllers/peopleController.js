@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const httpStatus = require('../helpers/httpStatus')
 
 const peopleController = (People) => {
-     //trae por query a los usuarios
+
   const getAllPeople = async (req, res, next) => {
     try {
       const { query } = req
@@ -17,7 +17,7 @@ const peopleController = (People) => {
     }
   }
 
-  //Crea usuarios
+  
   const postPeople = async (req, res, next) =>{
     try {
       const { body } = req
@@ -33,18 +33,15 @@ const peopleController = (People) => {
 
       await people.save()
 
-      return res.status(201).json(people)
+      return res.status(httpStatus.CREATED).json(people)
     } catch (err) {
-      res.status(500).send({
-        error: err.name,
-        cause: err.message
-      })
+      next(err)
     }
   }
 
-    //edita
+  
 
-  const putPeopleById = async (req, res) => {
+  const putPeopleById = async (req, res, next) => {
     try {
       const { body, params } = req
 
@@ -53,7 +50,9 @@ const peopleController = (People) => {
       })
 
       if (checkData === null) {
-        res.status(403).send('No data found with the provided ID.')
+        return res
+        .status(httpStatus.FORBIDDEN)
+        .send('No data found with the provided ID.')
       }
 
       const encryptedPassword = await bcrypt.hash(body.password, 10)
@@ -75,43 +74,42 @@ const peopleController = (People) => {
         }
       )
 
-      res.status(201).send('Data successful updated')
+      return res
+      .status(httpStatus.CREATED) 
+      .send('Data successful updated')
     } catch (err) {
-      res.status(500).send(err.name)
+      next(err)
     }
   }
 
         //params hace referencia a cuando se pone :id
 
-  const getPeopleById = async (req, res) => {
+  const getPeopleById = async (req, res, next) => {
    try{ 
       const { params } = req
       
       const response = await People.findById(params.id)
 
-      res.status(200).json(response)
+      return res.status(httpStatus.OK).json(response)
     } catch (err) {
-      res.status(500).send(err.name)
+      next(err)
     }
   }
 
-          //elimina
+          //elimina+}
 
-  const deletePeopleById = async (req, res) => {
+  const deletePeopleById = async (req, res, next) => {
     try{ 
       const { params } = req
 
-      const response = await People.findByIdAndDelete(params.id)
+       await People.findByIdAndDelete(params.id)
 
-      res.status(202).json(response)
+      return res.status(httpStatus.OK).send('Data successful deleted')
     } catch (err) {
-      res.status(500).send(err.name)
+      next(err)
     }
   }
-    //esto sirve para guardar las funciones dentro de un objeto
-        //esto se hace por que la funcion tiene funciones mas pequeñas dentro, entonces se trae el funcionamiento de ambas de esta forma
-            //este objeto luego sera desestructurado para que vuelva a leerse como codigo js.
-
+  
   return {
     getAllPeople,
     getPeopleById,

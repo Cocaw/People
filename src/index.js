@@ -3,29 +3,32 @@ const People = require('./models/peopleModel')
 const peopleRouter = require('./routes/peopleRouter')(People)
 const authRouter = require('./routes/authRouter')(People)
 const Agency = require('./models/agencyModel')
-const agencyRouter = require('./routes/peopleRouter')(Agency)
+const agencyRouter = require('./routes/agencyRouter')(Agency)
 const errorHandler = require('./middleware/errorHandler')
 const httpStatus = require('./helpers/httpStatus')
+const cors = require('cors');
+//llama a las peticiones que estuvvimos haciendo durate la api
 
-//trae el env a toda la api
+//llama al  env 
 require("dotenv").config()
 const { expressjwt } = require('express-jwt')
 
 
 const PORT = process.env.PORT || 5000
 
-//Se pone express dentro de una variable para poder ser utilizado
+
 const app = express()
 
 //se llama a la base de datos
 require('./database/db')
 
-//las dos lineas  dicen que se va a trabajar con json
+app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 //Token
-app.all('/api/*', expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] }).
+app.all('/*', 
+expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] }).
   unless({
     path: ['/auth/login', '/auth/register']
   })
@@ -47,12 +50,13 @@ app.use((err, _, res, next) => {
 })
 
 
-//endpoints 
-app.use('/api', peopleRouter) 
+//endpoints conectado rutas
+app.use('/api', peopleRouter, agencyRouter) 
   app.use('/', authRouter)
-app.use("/api", agencyRouter)
+
 //luego del routeo se llama a la funcion que determina que error sucedio
 app.use(errorHandler)
+
 
 app.listen(process.env.PORT, () => {
   console.log('Server is running')

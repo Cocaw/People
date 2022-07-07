@@ -1,13 +1,9 @@
 const express = require('express')
 const peopleController = require('../controllers/peopleController')
-//Validator tiene 3 propiedades de utilidad:
-  //validator.body()
-  //validator.query()
-  //validator.params()
-  const validator = require('express-joi-validation').createValidator({});
-  const bodySchema = require('../validations/peopleBodyValidator');
-  const querySchema = require('../validations/queryValidator');
-  const paramsSchema = require('../validations/paramsValidator');
+
+const validator = require('express-joi-validation').createValidator({})
+const bodySchema = require('../validations/peopleBodyValidator')
+
 
 const router = (People) => {
   const peopleRouter = express.Router()
@@ -17,14 +13,14 @@ const router = (People) => {
 
   peopleRouter
     .route('/people')
-    .get(validator.query(querySchema), getAllPeople)
+    .get(getAllPeople)
     .post(validator.body(bodySchema), postPeople)
   
   peopleRouter
     .route('people/:id')
-    .get(validator.params(paramsSchema), getPeopleById)
+    .get(getPeopleById)
     .put(validator.body(bodySchema),putPeopleById)
-    .delete(validator.params(paramsSchema), deletePeopleById)
+    .delete(deletePeopleById)
   
   return peopleRouter
 }

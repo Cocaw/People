@@ -1,11 +1,10 @@
-
 //modelo de la base de datos
-
 const mongoose = require('mongoose')
 
 const { Schema } = mongoose
 
 const peopleModel = new Schema({
+  
   //data que se guarda en la base de datos (mongo)
   firstName: { type: String, required: true, minLength: 3, maxLength: 30 },
   lastName: { type: String, required: true, minLength: 3, maxLength: 30 },
